@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SMASH ARENA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Saira+Condensed:ital,wght@0,600;0,700;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+  <body>
+    <main id="app">
+      <!-- ============ TITLE ============ -->
+      <section id="screen-title" class="screen is-active">
+        <div class="title-grain" aria-hidden="true"></div>
+        <div class="title-inner">
+          <p class="kicker">LOCAL · KEYBOARD · GAMEPAD · ONLINE</p>
+          <h1 class="logo">
+            <span class="logo-smash">SMASH</span>
+            <span class="logo-arena">ARENA</span>
+          </h1>
+          <p class="tagline">A four-fighter platform brawler for the classroom.</p>
+          <div class="title-actions">
+            <button class="btn btn-primary" data-action="local">
+              <span>PLAY LOCAL</span><em>same screen · keyboard + pads</em>
+            </button>
+            <button class="btn btn-ghost" data-action="online">
+              <span>PLAY ONLINE</span><em>one player per computer</em>
+            </button>
+            <button class="btn btn-ghost" data-action="controls">
+              <span>CONTROLS</span><em>rebind your keys</em>
+            </button>
+          </div>
+          <div class="controls-hint">
+            <div>
+              <strong>KEYBOARD</strong>
+              <span>Move <kbd>A</kbd><kbd>D</kbd> · Jump <kbd>W</kbd> · Attack
+                <kbd>J</kbd> · Special <kbd>K</kbd> · Shield <kbd>L</kbd> · Grab
+                <kbd>U</kbd></span>
+            </div>
+            <div>
+              <strong>GAMEPAD</strong>
+              <span>Stick move · <kbd>A</kbd> jump · <kbd>X</kbd> attack ·
+                <kbd>Y</kbd> special · <kbd>RB</kbd> shield · <kbd>LB</kbd> grab</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SETUP / CHARACTER SELECT ============ -->
+      <section id="screen-setup" class="screen">
+        <header class="setup-head">
+          <button class="btn btn-back" data-action="back">‹ BACK</button>
+          <h2>CHOOSE YOUR FIGHTERS</h2>
+          <div class="stock-pick">
+            <span>STOCKS</span>
+            <div class="seg" id="stock-seg">
+              <button data-stock="1">1</button>
+              <button data-stock="2">2</button>
+              <button data-stock="3" class="on">3</button>
+              <button data-stock="5">5</button>
+            </div>
+          </div>
+        </header>
+
+        <div class="slot-grid" id="slot-grid"><!-- slots injected --></div>
+
+        <footer class="setup-foot">
+          <div class="roster-stats" id="roster-stats"><!-- stat legend injected --></div>
+          <button class="btn btn-primary btn-start" id="start-btn">START BATTLE ▸</button>
+        </footer>
+      </section>
+
+      <!-- ============ GAME ============ -->
+      <section id="screen-game" class="screen">
+        <div class="stage-frame">
+          <canvas id="game-canvas" width="1280" height="720"></canvas>
+          <button class="btn btn-quit" data-action="quit">QUIT</button>
+        </div>
+      </section>
+
+      <!-- ============ RESULTS ============ -->
+      <section id="screen-results" class="screen">
+        <div class="results-inner">
+          <p class="kicker">GAME SET</p>
+          <h2 id="winner-name">WINNER</h2>
+          <div id="winner-art" class="winner-art"></div>
+          <div class="results-actions">
+            <button class="btn btn-primary" data-action="rematch">REMATCH</button>
+            <button class="btn btn-ghost" data-action="menu">MAIN MENU</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CONTROLS ============ -->
+      <section id="screen-controls" class="screen">
+        <div class="controls-inner">
+          <button class="btn btn-back" data-action="back">‹ BACK</button>
+          <h2>KEYBOARD CONTROLS</h2>
+          <p class="controls-sub">
+            Click a key, then press the new one. Gamepads use the standard layout
+            automatically.
+          </p>
+          <div class="bind-grid" id="bind-grid"><!-- rows injected --></div>
+          <div class="controls-actions">
+            <button class="btn btn-ghost" id="reset-controls">RESET TO DEFAULT</button>
+            <button class="btn btn-primary" data-action="back">DONE</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ ONLINE PANEL ============ -->
+      <section id="screen-online" class="screen">
+        <div class="online-inner">
+          <button class="btn btn-back" data-action="back">‹ BACK</button>
+          <h2>ONLINE LOBBY</h2>
+          <p class="online-note" id="online-note">
+            Start the room server, then everyone enters its address to join the
+            same match — one player per computer.
+          </p>
+          <div class="online-form">
+            <label>SERVER ADDRESS
+              <input id="server-url" type="text" value="ws://localhost:8080" />
+            </label>
+            <label>YOUR NAME
+              <input id="player-name" type="text" maxlength="10" placeholder="P1" />
+            </label>
+            <div class="char-row" id="online-chars"></div>
+            <button class="btn btn-primary" id="join-btn">CONNECT</button>
+          </div>
+          <pre class="online-log" id="online-log"></pre>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

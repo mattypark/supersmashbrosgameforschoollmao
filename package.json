@@ -1,0 +1,10 @@
+{
+  "name": "smash-arena",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A browser-based Smash-style platform fighter — local + LAN online.",
+  "scripts": {
+    "serve": "python3 -m http.server 5173"
+  }
+}

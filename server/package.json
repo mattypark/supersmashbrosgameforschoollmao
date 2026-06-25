@@ -1,0 +1,12 @@
+{
+  "name": "smash-arena-server",
+  "version": "0.1.0",
+  "description": "Authoritative LAN room server for SMASH ARENA",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
