@@ -1,7 +1,7 @@
 // Screen + setup-UI controller. Owns the DOM for title / character-select /
 // controls / results / online, and hands the main loop a finished match config.
 
-import { ROSTER, getCharacterIndex } from '../data/characters.js';
+import { ROSTER } from '../data/characters.js';
 import { InputManager, BINDABLE, keyLabel, KEYBOARD_LAYOUT } from '../engine/input.js';
 
 const ACTION_LABELS = {

@@ -1,0 +1,10 @@
+# One-click deploy to Render (render.com). Push this repo to GitHub, then
+# "New + > Blueprint" and point it at the repo. Serves game + multiplayer.
+services:
+  - type: web
+    name: smash-arena
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server/server.js
+    autoDeploy: true

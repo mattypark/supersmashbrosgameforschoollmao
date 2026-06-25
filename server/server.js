@@ -6,16 +6,61 @@
 //   npm start          (or: node server.js [port])
 
 import { WebSocketServer } from 'ws';
+import { createServer } from 'node:http';
+import { readFile } from 'node:fs/promises';
+import { extname, join, normalize } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createMatch, stepMatch } from '../src/game/match.js';
 import { serializeMatch } from '../src/net/snapshot.js';
 
-const PORT = Number(process.argv[2]) || 8080;
+// PORT comes from the host (Render/Railway/Fly set process.env.PORT), then an
+// explicit arg, else 8080.
+const PORT = Number(process.env.PORT) || Number(process.argv[2]) || 8080;
 const TICK_MS = 1000 / 60;
 const MAX_PLAYERS = 4;
 
-const wss = new WebSocketServer({ port: PORT });
-console.log(`SMASH ARENA room server listening on ws://localhost:${PORT}`);
-console.log('Share your LAN address (e.g. ws://192.168.x.x:%d) with players.', PORT);
+// --- static file server: serve the whole client from the project root --------
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
+const MIME = {
+  '.html': 'text/html',
+  '.js': 'text/javascript',
+  '.css': 'text/css',
+  '.json': 'application/json',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2',
+  '.map': 'application/json',
+};
+
+const httpServer = createServer(async (req, res) => {
+  try {
+    let urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
+    if (urlPath === '/') urlPath = '/index.html';
+    const filePath = normalize(join(ROOT, urlPath));
+    if (!filePath.startsWith(ROOT)) {
+      res.writeHead(403);
+      res.end('forbidden');
+      return;
+    }
+    const data = await readFile(filePath);
+    res.writeHead(200, {
+      'Content-Type': MIME[extname(filePath)] || 'application/octet-stream',
+      'Cache-Control': 'no-cache',
+    });
+    res.end(data);
+  } catch {
+    res.writeHead(404);
+    res.end('not found');
+  }
+});
+
+// WebSocket shares the same HTTP server / port — one URL serves game + matches.
+const wss = new WebSocketServer({ server: httpServer });
+httpServer.listen(PORT, () => {
+  console.log(`SMASH ARENA running on http://localhost:${PORT}  (game + multiplayer, one port)`);
+  console.log('LAN: share http://<your-ip>:%d  ·  deploy this server to play over the internet.', PORT);
+});
 
 const neutralInput = () => ({
   axisX: 0,
@@ -158,17 +203,38 @@ wss.on('connection', (ws) => {
     } else if (msg.t === 'start') {
       startMatch();
     } else if (msg.t === 'input' && room.running) {
-      // merge so edge flags set this frame survive until consumed
-      const inp = msg.i;
+      // sanitize untrusted client input, then merge so edge flags survive until consumed
+      const inp = msg.i || {};
+      const num = (v) => (Number.isFinite(v) ? Math.max(-1, Math.min(1, v)) : 0);
+      const bool = (v) => v === true;
+      const clean = {
+        axisX: num(inp.axisX),
+        axisY: num(inp.axisY),
+        left: bool(inp.left),
+        right: bool(inp.right),
+        up: bool(inp.up),
+        down: bool(inp.down),
+        attackPressed: bool(inp.attackPressed),
+        attackHeld: bool(inp.attackHeld),
+        specialPressed: bool(inp.specialPressed),
+        specialHeld: bool(inp.specialHeld),
+        jumpPressed: bool(inp.jumpPressed),
+        jumpHeld: bool(inp.jumpHeld),
+        grabPressed: bool(inp.grabPressed),
+        shieldHeld: bool(inp.shieldHeld),
+        flickX: num(inp.flickX),
+        flickY: num(inp.flickY),
+        connected: true,
+      };
       const cur = player.input;
       player.input = {
-        ...inp,
-        attackPressed: inp.attackPressed || cur.attackPressed,
-        specialPressed: inp.specialPressed || cur.specialPressed,
-        jumpPressed: inp.jumpPressed || cur.jumpPressed,
-        grabPressed: inp.grabPressed || cur.grabPressed,
-        flickX: inp.flickX || cur.flickX,
-        flickY: inp.flickY || cur.flickY,
+        ...clean,
+        attackPressed: clean.attackPressed || cur.attackPressed,
+        specialPressed: clean.specialPressed || cur.specialPressed,
+        jumpPressed: clean.jumpPressed || cur.jumpPressed,
+        grabPressed: clean.grabPressed || cur.grabPressed,
+        flickX: clean.flickX || cur.flickX,
+        flickY: clean.flickY || cur.flickY,
       };
     }
   });

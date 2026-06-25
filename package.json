@@ -3,8 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "A browser-based Smash-style platform fighter — local + LAN online.",
+  "description": "A browser-based Smash-style platform fighter — local + online multiplayer.",
   "scripts": {
+    "start": "node server/server.js",
     "serve": "python3 -m http.server 5173"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

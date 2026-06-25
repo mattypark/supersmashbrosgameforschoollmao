@@ -74,6 +74,18 @@ const armAudio = () => {
 window.addEventListener('pointerdown', armAudio);
 window.addEventListener('keydown', armAudio);
 
+// Default the online address to wherever this page is served from, so a deployed
+// build is zero-config. Static-only dev (port 5173) points at the local server.
+(() => {
+  const field = document.getElementById('server-url');
+  if (!field) return;
+  if (location.protocol === 'file:' || location.port === '5173') {
+    field.value = 'ws://localhost:8080';
+  } else if (location.host) {
+    field.value = `${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}`;
+  }
+})();
+
 // Quit buttons.
 document.querySelectorAll('[data-action="quit"]').forEach((b) =>
   b.addEventListener('click', () => {

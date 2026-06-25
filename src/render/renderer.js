@@ -291,8 +291,8 @@ function drawBlastHints(ctx, fighters) {
     const ax = Math.max(24, Math.min(STAGE_WIDTH - 24, f.x));
     const ay = Math.max(24, Math.min(STAGE_HEIGHT - 24, f.y - 40));
     ctx.save();
-    ctx.globalAlpha = 0.6 + 0.4 * Math.sin(Date.now() * 0.0); // static; pulse handled by danger color
-    ctx.fillStyle = f.percent > 90 ? '#ff5470' : f.color;
+    ctx.globalAlpha = 0.75;
+    ctx.fillStyle = f.percent > 90 ? '#ff2e7e' : f.color;
     ctx.beginPath();
     ctx.arc(ax, ay, 7, 0, Math.PI * 2);
     ctx.fill();

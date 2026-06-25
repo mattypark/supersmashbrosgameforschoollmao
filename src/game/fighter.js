@@ -538,7 +538,6 @@ function updateAttack(f, input, ctx) {
 function applyMoveMovement(f, input) {
   if (f.grounded) {
     f.vx *= 0.86;
-    f.grounded && collideStage(f, input);
   } else {
     applyGravity(f, input);
     // limited air drift during aerials
