@@ -1,0 +1,7 @@
+# Vercel only hosts the static client. The multiplayer server runs on Render.
+server/
+node_modules/
+scripts/
+render.yaml
+Procfile
+DEPLOY.md

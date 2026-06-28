@@ -46,6 +46,27 @@ The repo also ships a `Procfile` (`web: node server/server.js`), so **Railway**
 
 All of them set `process.env.PORT`, which the server already honors.
 
+## Frontend on Vercel (hybrid)
+
+Vercel is serverless — it **cannot** run the always-on WebSocket game server. So
+on Vercel you host only the **static client**; the multiplayer server stays on
+Render. The client is already wired to connect to the Render server from any
+static host (`ONLINE_SERVER` in `src/main.js`).
+
+1. Push the latest code to GitHub (includes `vercel.json` + `.vercelignore`).
+2. Go to <https://vercel.com> → sign in with GitHub.
+3. **Add New… → Project** → import `supersmashbrosgameforschoollmao`.
+4. Framework Preset: **Other**. Build Command: leave empty. Output Directory: `.`
+   (root). These come from `vercel.json` automatically — just click **Deploy**.
+5. You get a URL like `https://supersmashbrosgameforschoollmao.vercel.app`.
+
+The page loads instantly from Vercel's CDN; **PLAY ONLINE** connects to the
+Render server (`wss://smash-arena.onrender.com`). If you ever rename the Render
+service, update `ONLINE_SERVER` in `src/main.js`.
+
+> Note: the *first* online match still wakes the Render free-tier server (~30s).
+> Vercel only speeds up the page load, not the server cold-start.
+
 ## Local (no deploy)
 
 ```bash

@@ -74,15 +74,22 @@ const armAudio = () => {
 window.addEventListener('pointerdown', armAudio);
 window.addEventListener('keydown', armAudio);
 
-// Default the online address to wherever this page is served from, so a deployed
-// build is zero-config. Static-only dev (port 5173) points at the local server.
+// Default the online server address based on where this page is served from:
+//  - localhost / file://      -> the local dev server
+//  - *.onrender.com           -> same origin (the game server serves the page)
+//  - anywhere else (Vercel,   -> the deployed Render game server, since static
+//    Netlify, GH Pages, ...)     hosts can't run the WebSocket server
+const ONLINE_SERVER = 'wss://smash-arena.onrender.com';
 (() => {
   const field = document.getElementById('server-url');
   if (!field) return;
-  if (location.protocol === 'file:' || location.port === '5173') {
+  const host = location.host;
+  if (location.protocol === 'file:' || location.hostname === 'localhost' || location.port === '5173') {
     field.value = 'ws://localhost:8080';
-  } else if (location.host) {
-    field.value = `${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}`;
+  } else if (host.endsWith('.onrender.com')) {
+    field.value = `wss://${host}`;
+  } else {
+    field.value = ONLINE_SERVER;
   }
 })();
 
